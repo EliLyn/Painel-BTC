@@ -1,0 +1,1 @@
+cd "C:\Users\Eliton\OneDrive\Desktop\Pasta area de trabalho\painel_btc"
