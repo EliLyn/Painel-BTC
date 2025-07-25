@@ -1,15 +1,33 @@
-import pandas as pd
 import requests
+import pandas as pd
+from datetime import datetime
 
 def get_long_short_ratio():
-    try:
-        url = "https://fapi.binance.com/futures/data/globalLongShortAccountRatio?symbol=BTCUSDT&period=5m&limit=20"
-        r = requests.get(url)
-        data = r.json()
-        df = pd.DataFrame(data)
-        df['timestamp'] = pd.to_datetime(df['timestamp'], unit='ms')
-        df['long'] = df['longAccount']
-        df['short'] = df['shortAccount']
-        return df[['timestamp', 'long', 'short']]
-    except Exception:
+    url = "https://fapi.coinglass.com/api/futures/longShortChart?symbol=BTC&type=binance"
+    headers = {
+        "accept": "application/json",
+        "coinglassSecret": "glassnode-free"
+    }
+
+    response = requests.get(url, headers=headers)
+
+    if response.status_code != 200:
         return pd.DataFrame()
+
+    data = response.json()
+    if not data.get("data"):
+        return pd.DataFrame()
+
+    longs = data["data"].get("longAccount", [])
+    shorts = data["data"].get("shortAccount", [])
+    timestamps = data["data"].get("timestamp", [])
+
+    if not (longs and shorts and timestamps):
+        return pd.DataFrame()
+
+    df = pd.DataFrame({
+        "timestamp": [datetime.fromtimestamp(ts / 1000) for ts in timestamps],
+        "long": longs,
+        "short": shorts
+    })
+    return df
