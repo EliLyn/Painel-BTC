@@ -1,6 +1,6 @@
 import streamlit as st
 from scrapers.etf_flux import get_etf_flows
-from scrapers.long_short_ratio import get_long_short_ratio
+from scrapers.long_short import get_long_short_ratio
 from scrapers.open_interest import get_open_interest
 
 st.set_page_config(page_title="Painel BTC Institucional", layout="wide")
